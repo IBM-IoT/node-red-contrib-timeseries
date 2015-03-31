@@ -1,0 +1,617 @@
+<!--
+  Copyright 2015 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express oirregular.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="timeseries">
+    <div class="form-row">
+        <label for="node-config-input-hostname"><i class="fa fa-bookmark"></i> Host</label>
+        <input class="input-append-left" type="text" id="node-config-input-hostname" placeholder="localhost"
+         style="width: 40%;" >
+        <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
+        <input type="text" id="node-config-input-port" placeholder="27017" style="width:45px">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-db"><i class="fa fa-database"></i> Database</label>
+        <input type="text" id="node-config-input-db" placeholder="test">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-user"><i class="fa fa-user"></i> Username</label>
+        <input type="text" id="node-config-input-user">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="node-config-input-password">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('timeseries', {
+        category: 'config',
+        color: "rgb(218, 196, 180)",
+        defaults: {
+            hostname: {value: "127.0.0.1", required: true},
+            port: {value: 27017, required: true},
+            db: {value: "", required: true},
+            name: {value: ""}
+        },
+        credentials: {
+            user: {type: "text"},
+            password: {type: "password"}
+        },
+        label: function() {
+            return this.name || this.hostname + ":" + this.port + "/" + this.db;
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="timeseries out">
+    <div class="form-row">
+        <label for="node-input-timeseries"><i class="fa fa-server"></i> Server</label>
+        <input type="text" id="node-input-timeseries">
+    </div>
+    <div class="form-row">
+        <label for="node-input-collection"><i class="fa fa-table"></i> Table</label>
+        <input type="text" id="node-input-baseTimeSeriesTable" placeholder="table">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="timeseries out">
+    <p>Writes data to the TimeSeries database.</p>
+
+    <p>See the <a href="https://github.com/IBM-IoT/node-red-timeseries"> node-red-timeseries</a>
+     GitHub repository for the full documentation.</p>
+
+    <p>Takes in as input a JSON string from the incoming <code>msg.payload</code> and makes a REST POST call to insert
+    that JSON as a row into the TimeSeries database.</p>
+
+    <p>The new row is inserted into a virtual table (VTI) created off of the base table specified in the node
+    configuration. The virtual table, which is given the name <code>&lt;$BASE_TABLE_NAME&gt;_v</code>,
+    is automatically created on node deployment or when Node-RED starts.</p>
+
+    <p>For example, if you provide a base TimeSeries table called <code>sensors</code>, a virtual table called
+    <code>sensors_v</code> will automatically be created.</p>
+
+    <p>Both regular and irregular TimeSeries entries can be made.</p>
+
+    <p>See the following documentation for more information about the TimeSeries REST API:</p>
+
+    <p><a href="http://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.json.doc/ids_json_043.htm">
+    http://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.json.doc/ids_json_043.htm</a></p>
+
+    <p>Further information regarding TimeSeries virtual tables can be found here:</p>
+
+    <p><a href="http://www-01.ibm.com/support/knowledgecenter/SSGU8G_11.70.0/com.ibm.tms.doc/ids_tms_099.htm">
+    http://www-01.ibm.com/support/knowledgecenter/SSGU8G_11.70.0/com.ibm.tms.doc/ids_tms_099.htm</a></p>
+
+    <h4 id="examples">Examples:<a href="#examples"></a></h4>
+    <p><strong>Regular Time Series</strong>
+    The following JSON would add a regular TimeSeries entry of value "65" to sensor with ID "54".</p>
+
+    <div class="highlighted-data white">
+        <div class="highlight">
+            <pre><code class=" hljs json"><span id="LC1" class="line">{"<span class="hljs-attribute">sensor_id</span>":
+             <span class="hljs-value"><span class="hljs-number">54</span></span>,</span>
+            <span id="LC2" class="line">"<span class="hljs-attribute">measure_unit</span>":
+             <span class="hljs-value"><span class="hljs-string">"F"</span></span>,</span>
+            <span id="LC3" class="line">"<span class="hljs-attribute">value</span>":
+             <span class="hljs-value"><span class="hljs-number">65</span> </span>}</span>
+            <span id="LC4" class="line"></span></code></pre>
+        </div>
+    </div>
+
+
+    <p><strong>Irregular Time Series</strong>
+    The following JSON would add to the <code>json_data</code> field (which in this case, is itself JSON/BSON data) to an
+    irregular TimeSeries entry for sensor with ID "1" at time 2015-03-11 16:38:40.</p>
+
+    <div class="highlighted-data white">
+        <div class="highlight">
+            <pre><code class=" hljs json"><span id="LC1" class="line">{"<span class="hljs-attribute">id</span>":<span class="hljs-value"><span class="hljs-number">1</span></span>,</span>
+            <span id="LC2" class="line">"<span class="hljs-attribute">tstamp</span>":<span class="hljs-value"><span class="hljs-string">"2015-03-11 16:38:40.00000"</span></span>,</span>
+            <span id="LC3" class="line">"<span class="hljs-attribute">json_data</span>":<span class="hljs-value">{"<span class="hljs-attribute">nodeId</span>":<span class="hljs-value"><span class="hljs-number">2</span></span>,</span></span><span class="hljs-value">
+            </span><span id="LC4" class="line"><span class="hljs-value"> "<span class="hljs-attribute">commandClass</span>":<span class="hljs-value"><span class="hljs-number">50</span></span>,</span></span><span class="hljs-value">
+            </span><span id="LC5" class="line"><span class="hljs-value">"<span class="hljs-attribute">label</span>":<span class="hljs-value"><span class="hljs-string">"Current"</span></span>,</span></span><span class="hljs-value">
+            </span><span id="LC6" class="line"><span class="hljs-value">"<span class="hljs-attribute">max</span>":<span class="hljs-value"><span class="hljs-number">0</span></span>,"<span class="hljs-attribute">min</span>":<span class="hljs-value"><span class="hljs-number">0</span></span>,</span></span><span class="hljs-value">
+            </span><span id="LC7" class="line"><span class="hljs-value">"<span class="hljs-attribute">units</span>":<span class="hljs-value"><span class="hljs-string">"A"</span></span>,</span></span><span class="hljs-value">
+            </span><span id="LC8" class="line"><span class="hljs-value">"<span class="hljs-attribute">value</span>":<span class="hljs-value"><span class="hljs-number">0</span></span>}</span>}</span>
+            <span id="LC9" class="line"></span></code></pre>
+        </div>
+    </div>
+
+    <h4 id="configuration">Configuration<a href="#configuration"></a></h4>
+    <p>Double click on the TimeSeries output node to open the node configuration.
+    The following configurations can be set for the output node.</p>
+
+    <p><strong>Server</strong> - Specify the TimeSeries database server to connect to.
+    Note that any server configuration you make can be shared across any number
+    of input or output nodes.</p>
+
+    <ul>
+        <li>Host - Hostname of the database server.</li>
+        <li>Port - Port must be the same used by the wire listener.</li>
+        <li>Database - The name of the database to connect to.</li>
+        <li>Username - (Only required if the server requires authentication)</li>
+        <li>Password - (Only required if the server requires authentication)</li>
+        <li>Name - (Optional label for this database connection.)</li>
+    </ul>
+
+    <p><strong>Table</strong> - The TimeSeries table to insert data into. Note that a
+    corresponding Virtual table (VTI) will automatically be created for this base
+    table.</p>
+
+    <p><strong>Name</strong> - An optional label for this node.</p>
+</script>
+
+<script type="text/javascript">
+
+    function oneditprepare() {
+        $("#node-input-operation").change(function () {
+            var id = $("#node-input-operation option:selected").val();
+
+            if (id === "update") {
+                $(".node-input-payonly").hide();
+                $(".node-input-upsert, .node-input-multi").show();
+            } else if (id === "delete") {
+                $(".node-input-payonly, .node-input-upsert, .node-input-multi").hide();
+            } else {
+                $(".node-input-payonly").show();
+                $(".node-input-upsert, .node-input-multi").hide();
+            }
+        });
+
+        $("#node-input-collection").change(function () {
+            if($("#node-input-collection").val() === "") {
+                $("#node-warning").show();
+            } else {
+                $("#node-warning").hide();
+            }
+        });
+    }
+
+    RED.nodes.registerType('timeseries out', {
+        category: 'storage-output',
+        color: "rgb(135, 206, 250)",
+        defaults: {
+            timeseries: {type: "timeseries", required: true},
+            name: {value: ""},
+            baseTimeSeriesTable: {value: ""}
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "timeseries.png",
+        align: "right",
+        label: function() {
+            var timeseriesNode = RED.nodes.node(this.timeseries);
+            return this.name || (timeseriesNode ? timeseriesNode.label() + " " + this.baseTimeSeriesTable: "timeseries");
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: oneditprepare
+    });
+
+</script>
+
+<script type="text/x-red" data-template-name="timeseries in">
+    <div class="form-row">
+        <label for="node-input-timeseries"><i class="fa fa-server"></i> Server</label>
+        <input type="text" id="node-input-timeseries">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-collection"><i class="fa fa-table"></i> Table</label>
+        <input type="text" id="node-input-baseTimeSeriesTable" placeholder="table">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-tscolumn"><i class="fa fa-columns"></i>TS Column</label>
+        <input type="text" id="node-input-tscolumn" placeholder="timeseries column name">
+    </div>
+
+
+   <div>
+        <label for="node-input-ids"><i class="fa fa-wrench"> Field(s) to aggregate</i></label>
+    </div>
+     <div class="form-row node-input-rule-container-row" style="margin-bottom: 0px;">
+        <div id="node-input-rule-container-div" style="box-sizing: border-box; border-radius: 5px; height: 100px;
+         padding: 5px; border: 1px solid #ccc; overflow-y:scroll;">
+            <ol id="node-input-rule-container" style=" list-style-type:none; margin: 0;"></ol>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <a href="#" class="btn btn-mini" id="node-input-add-rule" style="margin-top: 4px;"><i class="fa fa-plus"></i>
+        New Aggregation</a>
+    </div>
+
+    <div>
+        <label for="node-input-ids"><i class="fa fa-wrench"> Name of unique key field in incoming JSON:</i></label>
+    </div>
+
+    <div class="form-row">
+        <input type="text" id="node-input-ids" placeholder="sensor_id">
+    </div>
+
+    <div class="form-row">
+        <i class="fa fa-wrench"></i> Aggregation mode:
+        <select type="text" id="node-input-mode" style="display: inline-block; vertical-align: top; width: 100px;">
+            <option value="continuous">continuous</option>
+            <option value="discrete">discrete</option>
+        </select>
+    </div>
+
+        <div class="form-row" display: inline-block;>
+            <i class="fa fa-wrench"></i> Aggregate between
+            <select type="text" id="node-input-timeType" style="display: inline-block; vertical-align: top;
+             width: 95px;">
+                <option value="current_time">now</option>
+                <option value="json_time">timestamp</option>
+            </select> and
+
+            <input type="text" id="node-input-range" placeholder="15" style="width: 20px;">
+            <select type="text" id="node-input-unit" style="display: inline-block; vertical-align: top; width: 100px;">
+                <option value="seconds">second(s)</option>
+                <option value="minutes">minute(s)</option>
+                <option value="hours">hour(s)</option>
+                <option value="days">day(s)</option>
+                <option value="weeks">week(s)</option>
+                <option value="months">month(s)</option>
+                <option value="years">year(s)</option>
+            </select> ago.
+    </div>
+
+    <div class="form-row" display: inline-block;>
+            <i class="fa fa-wrench"></i> Calendar pattern length:
+            <input type="text" id="node-input-calendarRange" placeholder="15" style="width: 20px;">
+            <select type="text" id="node-input-calendarUnit" style="display: inline-block; vertical-align: top;
+             width: 100px;">
+                <option value="second">second(s)</option>
+                <option value="minute">minute(s)</option>
+                <option value="hour">hour(s)</option>
+                <option value="day">day(s)</option>
+                <option value="week">week(s)</option>
+                <option value="month">month(s)</option>
+                <option value="year">year(s)</option>
+            </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+</script>
+
+<script type="text/x-red" data-help-name="timeseries in">
+    <p>Performs the specified statistical aggregation on TimeSeries data over a specified time range.</p>
+
+    <p>See the <a href="https://github.com/IBM-IoT/node-red-timeseries"> node-red-timeseries</a>
+     GitHub repository for the full documentation.</p>
+
+    <p>The result is returned in <code>msg.payload</code>.</p>
+
+    <p>This node provides the functionality of the TimeSeries <code>AggregateBy()</code> function</p>
+
+    <p>See the <a href="http://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.tms.doc/ids_tms_141.htm">
+    IBM Knowledge Center</a> for more information on the AggregateBy() function.</p>
+
+    <p>Takes in a JSON object which specifies the row ID to aggregate on and optionally the timestamp on which to start
+     aggration.</p>
+
+    <p>For example, if the unique key column is named "id" and we want to aggregate on row with ID
+    "eca86bf831dd.ZWnode3" we would pass in the JSON:
+    {id:"eca86bf831dd.ZWnode3"}
+    and specify that the unique key column is name "id" in the "Name of unique key field in incoming JSON" field.</p>
+    <h4 id="configuration">Configuration<a href="#configuration"></a></h4>
+    <p>Double click on the TimeSeries input node to open the node configuration.
+    The following configurations can be set for the input node.</p>
+
+    <p><strong>Server</strong> - Specify the TimeSeries database server to connect to.
+    Note that any server configuration you make can be shared across any number
+    of input or output nodes.</p>
+
+    <ul>
+        <li>Host - Hostname of the database server.</li>
+        <li>Port - Port must be the same used by the wire listener.</li>
+        <li>Database - The name of the databse to connect to.</li>
+        <li>Username - (Only required if the server requires authentication)</li>
+        <li>Password - (Only required if the server requires authentication)</li>
+        <li>Name - (Optional label for this database connection.)</li>
+    </ul>
+
+    <p><strong>Table</strong> - The base TimeSeries table that has data you want to aggregate on.</p>
+
+    <p><strong>TS Column</strong> - The name of the table's TimeSeries column.</p>
+
+    <p><strong>Fields to aggregate</strong> - Select the field(s) to peform aggregation on and the
+    type of aggregration you want to do.</p>
+
+    <p>Press <code>New Aggreation</code> to add a new field. Select the new aggregation type
+    to perform and enter the field name. Dot notation is supported for JSON values.</p>
+
+    <p>The following statisitcal aggregations are supported.</p>
+
+    <ul>
+        <li>Avg</li>
+        <li>Sum</li>
+        <li>Min</li>
+        <li>Max</li>
+    </ul>
+
+    <p>There is no limit to the number of fields you can aggregate.</p>
+
+    <p><strong>Name of unique key field in incoming JSON - </strong></p>
+
+    <p>Specify the name of the unique key field for the TimeSeries table. This value
+    will be used to find the unique key value in the incoming JSON.</p>
+
+    <p>For example, if the unique key column is named "id" and we want to aggregate on
+    row with ID "eca86" we would pass in JSON containing the line:</p>
+
+    <div class="highlighted-data white">
+        <div class="highlight">
+            <pre><code class=" hljs r"><span id="LC1" class="line">{ <span class="hljs-keyword">...</span></span>
+            <span id="LC2" class="line">id: <span class="hljs-string">"eca86"</span></span>
+            <span id="LC3" class="line"><span class="hljs-keyword">...</span> }</span>
+            <span id="LC4" class="line"></span></code></pre>
+      </div>
+    </div>
+
+    <p>and specify that the unique key column has name "id" in the
+    "Name of unique key field in incoming JSON field."</p>
+
+    <p>Only one ID value can be specified in the incoming JSON</p>
+
+    <p><strong>Aggregration mode -</strong></p>
+
+    <ul>
+        <li><i>Discrete</i> -
+        The value we are aggregating is a discrete value and there is no intermittent
+        values between the stored values.</li>
+    </ul>
+
+    <p>Stock purchase orders are an example of discrete values.</p>
+
+    <ul>
+        <li><i>Continuous</i> -
+        The value we are aggregrating has intermittent values between the actual recorded values.</li>
+    </ul>
+
+    <p>For example, temperature values have intermittent values even when values are not being recorded.</p>
+
+    <p>In discrete mode, if a temperature sensor records a value of 50 degress at
+    12:00 and a value of 100 degrees at 12:14, we will get a value of 75 degrees
+    for when we try to get the get the average temperature between 12:00-12:15.
+    However, this value is incorrect because what we really want to average is 13 minutes
+    of 50 degrees and 2 minutes of 100 degrees. The continuous mode automatically takes this into account
+    and will "weight" the values so that the implicit, interrmittant values are used in the calculation of the average.</p>
+
+    <p><strong>Aggregate Between -</strong></p>
+
+    <p>Select the range of time on which to aggregate on.</p>
+
+    <ul>
+      <li><i>now</i> - </li>
+          Between the current clock time and however long ago in the past.
+    </ul>
+
+    <ul>
+     <li><i>timestamp</i> - </li>
+         Between the Unix timestamp passed in on the incoming JSON payload and however long in the past.
+         Use the ```timestamp``` field in the incoming JSON to specify the Unix timestamp. For example:
+    </ul>
+
+    <div class="highlighted-data white">
+        <div class="highlight">
+            <pre><code class=" hljs r"><span id="LC1" class="line">{ <span class="hljs-keyword">...</span></span>
+            <span id="LC2" class="line"><span class="hljs-string">"timestamp"</span>: <span class="hljs-number">1427399297364</span> <span class="hljs-comment"># Unix timestamp</span></span>
+            <span id="LC3" class="line"><span class="hljs-keyword">...</span> }</span>
+            <span id="LC4" class="line"></span></code></pre>
+        </div>
+    </div>
+
+    <p><strong>Calendar pattern length - </strong></p>
+
+    <p>The size of the calendar pattern on which to aggregate.</p>
+
+    <p>For most uses, this will be the same as your "aggregate between" value.</p>
+
+    <p><strong>Name</strong> - An optional label for this node.</p>
+    </div>
+
+</script>
+
+<script type="text/javascript">
+
+    RED.nodes.registerType('timeseries in', {
+        category: 'storage-input',
+        color: "rgb(135, 206, 250)",
+        defaults: {
+            timeseries: {type: "timeseries", required: true},
+            name: {value: ""},
+            baseTimeSeriesTable: {value: "", required: true},
+            tscolumn: {value: "", required: true},
+            unit: {value: "", required: true},
+            range: {value: "", required: true},
+            calendarRange: {value: "", required: true},
+            calendarUnit: {value: "", required: true},
+            ids: {value: "", required: true},
+            timeType: {value: "", required: true},
+            mode: {value: "", required:true},
+            rules: {value:[{t:"", v:""}]}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "timeseries.png",
+        label: function() {
+            var timeseriesNode = RED.nodes.node(this.timeseries);
+            return this.name || (timeseriesNode ? timeseriesNode.label() + " " + this.baseTimeSeriesTable: "timeseries");
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+
+            var operators = [
+                {v:"AVG",t:"average"},
+                {v:"SUM",t:"sum"},
+                {v:"MIN",t:"min"},
+                {v:"MAX",t:"max"}
+            ];
+
+            function generateRule(i,rule) {
+                var container = $('<li/>',{style:"background: #fff; margin:0; padding:8px 0px; border-bottom: 1px solid #ccc;"});
+                var row = $('<div/>').appendTo(container);
+                var row2 = $('<div/>',{style:"padding-top: 5px; text-align: right;"}).appendTo(container);
+                //$('<i style="color: #eee; cursor: move;" class="node-input-rule-handle fa fa-bars"></i>').appendTo(row);
+
+                var selectField = $('<select/>',{style:"width:120px; margin-left: 5px; text-align: center;"}).appendTo(row);
+                for (var d in operators) {
+                    selectField.append($("<option></option>").val(operators[d].v).text(operators[d].t));
+                }
+
+                var valueField = $('<input/>',{class:"node-input-rule-value",type:"text",style:"margin-left: 5px; width: 280px;"}).appendTo(row);
+                var btwnField = $('<span/>').appendTo(row);
+                var btwnValueField = $('<input/>',{class:"node-input-rule-btwn-value",type:"text",style:"margin-left: 5px; width: 50px;"}).appendTo(btwnField);
+                btwnField.append(" and ");
+                var btwnValue2Field = $('<input/>',{class:"node-input-rule-btwn-value2",type:"text",style:"width: 50px;margin-left:2px;"}).appendTo(btwnField);
+
+                var finalspan = $('<span/>',{style:"float: right; margin-top: 3px;margin-right: 10px;"}).appendTo(row);
+                finalspan.append('  <span class="node-input-rule-index">'+""+'</span> ');
+
+                var deleteButton = $('<a/>',{href:"#",class:"btn btn-mini", style:"margin-left: 5px;"}).appendTo(finalspan);
+                $('<i/>',{class:"fa fa-remove"}).appendTo(deleteButton);
+
+                selectField.change(function() {
+                    var type = selectField.children("option:selected").val();
+                    if (type.length < 4) {
+                        selectField.css({"width":"85px"});
+                    } else if (type === "regex") {
+                        selectField.css({"width":"147px"});
+                    } else {
+                        selectField.css({"width":"120px"});
+                    }
+                    if (type === "btwn") {
+                        valueField.hide();
+                        btwnField.show();
+                    } else {
+                        btwnField.hide();
+                        if (type === "true" || type === "false" || type === "null" || type === "nnull" || type === "else") {
+                            valueField.hide();
+                        } else {
+                            valueField.show();
+                        }
+                    }
+                });
+
+
+                deleteButton.click(function() {
+                    container.css({"background":"#fee"});
+                    container.fadeOut(300, function() {
+                        $(this).remove();
+                         $(this).find(".node-input-rule-index").html(i+1);
+                    });
+                });
+
+                $("#node-input-rule-container").append(container);
+
+                selectField.find("option").filter(function() {return $(this).val() == rule.t;}).attr('selected',true);
+                if (rule.t == "btwn") {
+                    btwnValueField.val(rule.v);
+                    btwnValue2Field.val(rule.v2);
+                } else if (typeof rule.v != "undefined") {
+                    valueField.val(rule.v);
+                }
+                selectField.change();
+            }
+
+            $("#node-input-add-rule").click(function() {
+                generateRule($("#node-input-rule-container").children().length+1,{t:"",v:"",v2:""});
+                $("#node-input-rule-container-div").scrollTop($("#node-input-rule-container-div").get(0).scrollHeight);
+            });
+
+            for (var i=0;i<this.rules.length;i++) {
+                var rule = this.rules[i];
+                generateRule(i+1,rule);
+            }
+
+            function switchDialogResize() {
+                var rows = $("#dialog-form>div:not(.node-input-rule-container-row)");
+                var height = $("#dialog-form").height();
+                for (var i=0;i<rows.size();i++) {
+                    height -= $(rows[i]).outerHeight(true);
+                }
+                var editorRow = $("#dialog-form>div.node-input-rule-container-row");
+                height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+                $("#node-input-rule-container-div").css("height",height+"px");
+            };
+
+            $( "#node-input-rule-container" ).sortable({
+                axis: "y",
+                update: function( event, ui ) {
+                    var rules = $("#node-input-rule-container").children();
+                    rules.each(function(i) {
+                        $(this).find(".node-input-rule-index").html(i+1);
+                    });
+                },
+                handle:".node-input-rule-handle",
+                cursor: "move"
+            });
+            $( "#node-input-rule-container .node-input-rule-handle" ).disableSelection();
+
+            $( "#dialog" ).on("dialogresize", switchDialogResize);
+            $( "#dialog" ).one("dialogopen", function(ev) {
+                var size = $( "#dialog" ).dialog('option','sizeCache-switch');
+                if (size) {
+                    $("#dialog").dialog('option','width',size.width);
+                    $("#dialog").dialog('option','height',size.height);
+                    switchDialogResize();
+                }
+            });
+            $( "#dialog" ).one("dialogclose", function(ev,ui) {
+                $( "#dialog" ).off("dialogresize",switchDialogResize);
+            });
+        },
+        oneditsave: function() {
+            var rules = $("#node-input-rule-container").children();
+            var ruleset;
+            var node = this;
+            node.rules= [];
+            rules.each(function(i) {
+                var rule = $(this);
+                var type = rule.find("select option:selected").val();
+                var r = {t:type};
+                if (!(type === "true" || type === "false" || type === "null" || type === "nnull" || type === "else")) {
+                    if (type === "btwn") {
+                        r.v = rule.find(".node-input-rule-btwn-value").val();
+                        r.v2 = rule.find(".node-input-rule-btwn-value2").val();
+                    } else {
+                        r.v = rule.find(".node-input-rule-value").val();
+                    }
+                }
+                node.rules.push(r);
+            });
+        }
+    });
+
+</script>
+
