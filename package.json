@@ -1,13 +1,13 @@
 {
-  "name": "node-red-timeseries",
-  "version": "1.0.0.1",
+  "name": "node-red-contrib-timeseries",
+  "version": "1.0.0-1",
   "description": "A Node-RED node for TimeSeries Access",
   "dependencies": {
     "moment": "2.9.*"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/IBM-IoT/node-red-timeseries"
+    "url": "https://github.com/IBM-IoT/node-red-contrib-timeseries"
   },
   "license": "Apache",
   "keywords": [
@@ -22,7 +22,7 @@
   },
   "author": "Kenneth Myers <myerske@us.ibm.com> (http://nodered.org)",
   "bugs": {
-    "url": "https://github.com/IBM-IoT/node-red-timeseries/issues"
+    "url": "https://github.com/IBM-IoT/node-red-contrib-timeseries/issues"
   },
   "main": "timeseries.js",
   "scripts": {

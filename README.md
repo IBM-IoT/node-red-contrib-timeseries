@@ -1,4 +1,4 @@
-node-red-timeseries
+node-red-contrib-timeseries
 ========================
 A [Node-RED](http://nodered.org) node to output to and read from a TimeSeries database.
 
@@ -6,7 +6,7 @@ Install
 -------
 Run the following command in the root directory of your Node-RED install:
 
-```npm install node-red-timeseries```
+```npm install node-red-contrib-timeseries```
 
 Once installed, the TimeSeries input and output nodes will be available in the 
 node pallet.
