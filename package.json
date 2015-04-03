@@ -1,24 +1,31 @@
 {
-    "name"          : "node-red-timeseries",
-    "version"       : "1.0.0",
-    "description"   : "A Node-RED node for TimeSeries Access",
-    "dependencies"  : {
-        "moment"   : "2.9.*"
-    },
-    "repository" : {
-        "type":"git",
-        "url":"https://github.com/IBM-IoT/node-red-timeseries"
-    },
-    "license": "Apache",
-    "keywords": [ "node-red", "timeseries", "IBM"],
-    "node-red"      : {
-        "nodes"     : {
-            "timeseries": "timeseries.js"
-        }
-    },
-    "author": {
-        "name": "Kenneth Myers",
-        "email": "myerske@us.ibm.com",
-        "url": "http://nodered.org"
+  "name": "node-red-timeseries",
+  "version": "1.0.0",
+  "description": "A Node-RED node for TimeSeries Access",
+  "dependencies": {
+    "moment": "2.9.*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IBM-IoT/node-red-timeseries"
+  },
+  "license": "Apache",
+  "keywords": [
+    "node-red",
+    "timeseries",
+    "IBM"
+  ],
+  "node-red": {
+    "nodes": {
+      "timeseries": "timeseries.js"
     }
+  },
+  "author": "Kenneth Myers <myerske@us.ibm.com> (http://nodered.org)",
+  "bugs": {
+    "url": "https://github.com/IBM-IoT/node-red-timeseries/issues"
+  },
+  "main": "timeseries.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
