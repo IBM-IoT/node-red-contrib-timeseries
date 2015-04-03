@@ -118,7 +118,7 @@ module.exports = function(RED) {
             req.on('error',function(err) {
                 msg.payload = err.toString() + " : " + url;
                 msg.statusCode = err.code;
-                node.warning(err.toString());
+                node.warn(err.toString());
                 node.send(msg);
                 node.status({fill:"red",shape:"ring",text:err.code});
             });
