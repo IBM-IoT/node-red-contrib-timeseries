@@ -1,6 +1,6 @@
 {
   "name": "node-red-timeseries",
-  "version": "1.0.0",
+  "version": "1.0.0.1",
   "description": "A Node-RED node for TimeSeries Access",
   "dependencies": {
     "moment": "2.9.*"
