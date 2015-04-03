@@ -118,7 +118,7 @@ module.exports = function(RED) {
             req.on('error',function(err) {
                 msg.payload = err.toString() + " : " + url;
                 msg.statusCode = err.code;
-                node.warn(err.toString());
+                node.warning(err.toString());
                 node.send(msg);
                 node.status({fill:"red",shape:"ring",text:err.code});
             });
@@ -129,8 +129,14 @@ module.exports = function(RED) {
         });
 
         function createVirtualTable(virtualTableName) {
+            var moment = require('moment');
+            var date_time_format = "YYYY-MM-DD HH:mm:ss";
+
+            var current_date = moment().format(date_time_format);
+
             var virtualTableCreationJson = "".concat('{"$sql":"execute procedure tscreatevirtualtab(',
-                "'", virtualTableName, "', '", node.baseTimeSeriesTable, "')", ';"}');
+                "'", virtualTableName, "', '", node.baseTimeSeriesTable, "', '","calendar(ts_1sec), origin(",
+                current_date, ".00000)')", ';"}');
             var virtualTableCreationUrl = sqlPassThroughBaseUrl.concat(virtualTableCreationJson);
             node.log("If it does not already exist, creating the virtual table for the base table: " +
             node.baseTimeSeriesTable);
