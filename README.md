@@ -163,7 +163,7 @@ id: "eca86"
 and specify that the unique key column has name "id" in the
 "Name of unique key field in incoming JSON field."
 
-Only one ID value can be specified in the incoming JSON>
+Only one ID value can be specified in the incoming JSON.
 
 
 **Aggregration mode** -
