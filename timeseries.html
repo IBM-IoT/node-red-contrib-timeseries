@@ -254,6 +254,11 @@
     </div>
 
     <div class="form-row">
+      <label form="node-input-filter_id"><i class="fa fa-wrench"></i> ID</label>
+      <input type="text" id="node-input-filter_id" placeholder="ID">
+    </div>
+
+    <div class="form-row">
         <i class="fa fa-wrench"></i> Aggregation mode:
         <select type="text" id="node-input-mode" style="display: inline-block; vertical-align: top; width: 100px;">
             <option value="continuous">continuous</option>
@@ -455,6 +460,7 @@
             calendarRange: {value: "", required: true},
             calendarUnit: {value: "", required: true},
             ids: {value: "", required: true},
+            filter_id: {value: ""},
             timeType: {value: "", required: true},
             mode: {value: "", required:true},
             rules: {value:[{t:"", v:""}]}
@@ -614,4 +620,3 @@
     });
 
 </script>
-
