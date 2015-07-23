@@ -1,0 +1,148 @@
+<!--
+  Copyright 2015 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/javascript">
+  RED.nodes.registerType( 'timeseries-- in' , {
+      category: 'storage-input',
+      color: '#bbe5ff',
+      defaults: {
+        timeseries: { type : "timeseries" , required : true },
+        name: { value : "" },
+        table : { value : "" , required : true },
+        idcolumn: { value : "" , required : true },
+        filter_id: { value : "" },
+        tscolumn: { value : "" , required : true },
+        start_type: { value : "now" },
+        start_ts: { value : "" , validate : function( v ) {
+          $start_type = $( "#node-input-start_type" );
+          var start_type = $start_type.length > 0 ? $start_type.val() : this.start_type;
+          if( start_type === "now" )
+          {
+            return true;
+          }
+          else
+          {
+            return !isNaN( Date.parse( v ) );
+          }
+        } },
+        end_value: { value : "0" , required : true , validate : function( v ) {
+          v = parseFloat( v );
+          return ( !isNaN( v ) && v > 0 );
+        } },
+        end_unit: { value : "seconds" , required : true }
+      },
+      inputs:1,
+      outputs:1,
+      icon: "timeseries.png",
+      label: function() {
+          return this.name || "timeseries simple";
+      },
+
+      oneditprepare : function() {
+
+        function zeropad( v )
+        {
+          return v < 10 ? "0" + v : v;
+        }
+
+        function updateStartTS( type )
+        {
+          var $tsInput = $( "#node-input-start_ts" );
+          var $container = $tsInput.parent( ".form-row" );
+          if( type === "now" )
+          {
+            $container.hide();
+            $tsInput.val( "" );
+          }
+          else
+          {
+            $container.show();
+            if( !$tsInput.val() )
+            {
+              var d = new Date();
+              $tsInput.val( zeropad( d.getMonth() + 1 ) + "/" + zeropad( d.getDate() ) + "/" + d.getFullYear() + " " +
+                                     zeropad( d.getHours() ) + ":" + zeropad( d.getMinutes() ) + ":" + zeropad( d.getSeconds() ) );
+            }
+          }
+        }
+
+        $( "#node-input-idcolumn" ).on( "change" , function() {
+          $( "#node-input-filter_id" ).attr( "placeholder" , "msg.payload." + $( this ).val() );
+        } );
+
+        $( "#node-input-start_type" ).on( "change" , function() {
+          updateStartTS( $( this ).val() );
+        } );
+
+        updateStartTS( this.start_type );
+      }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="timeseries-- in">
+  <div class="form-row">
+    <label for="node-input-timeseries"><i class="fa fa-server"></i> Server</label>
+    <input type="text" id="node-input-timeseries">
+  </div>
+  <div class="form-row">
+    <label for="node-input-table"><i class="fa fa-table"></i> Table</label>
+    <input type="text" id="node-input-table" placeholder="Table">
+  </div>
+  <div class="form-row">
+    <label for="node-input-idcolumn"><i class="fa fa-columns"></i> ID Column</label>
+    <input type="text" id="node-input-idcolumn" placeholder="ID Column Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-filter_id"><i class="icon-tag"></i> ID</label>
+    <input type="text" id="node-input-filter_id" placeholder="ID">
+  </div>
+  <div class="form-row">
+    <label for="node-input-tscolumn"><i class="fa fa-columns"></i> TS Column</label>
+    <input type="text" id="node-input-tscolumn" placeholder="Timeseries Column Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-start_type"><i class="icon-time"></i> Select between</label>
+    <select id="node-input-start_type">
+      <option value="now">Now</option>
+      <option value="tstamp">Enter Date/Time...</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-start_ts"> </label>
+    <input type="text" id="node-input-start_ts" placeholder="Enter Date/Time">
+  </div>
+  <div class="form-row">
+    <label for="node-input-end_value">...and</label>
+    <input type="text" id="node-input-end_value" placeholder="#" style="width:40px">
+    <select id="node-input-end_unit" style="width:150px">
+      <option value="seconds">second(s)</option>
+      <option value="minutes">minute(s)</option>
+      <option value="hours">hour(s)</option>
+      <option value="days">day(s)</option>
+      <option value="weeks">week(s)</option>
+      <option value="months">month(s)</option>
+      <option value="years">year(s)</option>
+    </select> ago
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="timeseries-- in">
+    <p>Simple timeseries query node.</p>
+</script>
