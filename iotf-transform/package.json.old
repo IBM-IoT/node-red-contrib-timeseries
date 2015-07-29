@@ -1,0 +1,34 @@
+{
+  "name": "iotf-transform",
+  "version": "1.0.0",
+  "description": "A Node-RED node for IBM IoT Cloud publishing",
+  "license": "Apache",
+  "keywords": [
+    "node-red",
+    "IoT Foundation",
+    "IBM"
+  ],
+  "node-red": {
+    "nodes": {
+      "iotf-transform": "iotftransform.js"
+    }
+  },
+  "author": {
+    "name": "Kevin Enright",
+    "email": "kenright@us.ibm.com",
+    "url": "http://nodered.org"
+  },
+  "main": "iotftransform.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "_npmVersion": "2.7.4",
+  "_nodeVersion": "0.10.33",
+  },
+  "maintainers": [
+    {
+      "name": "kevinenright",
+      "email": "kenright@us.ibm.com"
+    }
+  ],
+}

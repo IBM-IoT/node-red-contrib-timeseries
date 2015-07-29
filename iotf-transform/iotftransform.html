@@ -1,0 +1,27 @@
+<script type="text/javascript">
+	RED.nodes.registerType('iotf-transform', {
+		category: 'GatewayKit',
+		color: '#c97a7a',
+		defaults: {
+			name: {value:""},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "timeseries.png",
+		align: "right",
+		label: function() {
+			return this.name||"IoTF Transform";
+		}
+	});
+</script>
+
+<script type="text/x-red" data-template-name="iotf-transform">
+	<div>
+		<label for="node-input-name">Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="iot-foundation">
+	<p>This node takes data from the timeseries out node and transforms it to be inserted into the Internet of Things Foundation.</p>
+</script>

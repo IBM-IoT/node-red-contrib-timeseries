@@ -1,0 +1,56 @@
+{
+  "name": "iotf-transform",
+  "version": "1.0.0-2",
+  "description": "Transforms timeseries aggregated data to be sent to the IoT Foundaiton",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IBM-IoT/node-red-contrib-timeseries.git"
+  },
+  "license": "Apache",
+  "keywords": [
+    "node-red",
+    "timeseries",
+    "IBM"
+  ],
+  "node-red": {
+    "nodes": {
+      "iotf-transform": "iotftransform.js"
+    }
+  },
+  "author": {
+    "name": "Kevin Enright",
+    "email": "kenright@us.ibm.com",
+    "url": "http://nodered.org"
+  },
+  "bugs": {
+    "url": "https://github.com/IBM-IoT/node-red-contrib-timeseries/issues"
+  },
+  "main": "iotftransform.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "gitHead": "f9c1001583cbf1d4efa8bebbb60810be7cb6e073",
+  "homepage": "https://github.com/IBM-IoT/node-red-contrib-timeseries",
+  "_id": "node-red-contrib-timeseries@1.0.0-2",
+  "_shasum": "be738602c122a8146ec7b0a12bafdb442e1b7a91",
+  "_from": "node-red-contrib-timeseries@*",
+  "_npmVersion": "2.7.4",
+  "_nodeVersion": "0.10.33",
+  "_npmUser": {
+    "name": "Kenright13",
+    "email": "kenright@us.ibm.com"
+  },
+  "maintainers": [
+    {
+      "name": "Kenright13",
+      "email": "kenright@us.ibm.com"
+    }
+  ],
+  "dist": {
+    "shasum": "be738602c122a8146ec7b0a12bafdb442e1b7a91",
+    "tarball": "http://registry.npmjs.org/node-red-contrib-timeseries/-/node-red-contrib-timeseries-1.0.0-2.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/node-red-contrib-timeseries/-/node-red-contrib-timeseries-1.0.0-2.tgz",
+  "readme": "ERROR: No README data found!"
+}
