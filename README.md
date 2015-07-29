@@ -8,10 +8,10 @@ Run the following command in the root directory of your Node-RED install:
 
 ```npm install node-red-contrib-timeseries```
 
-Once installed, the TimeSeries input and output nodes will be available in the 
+Once installed, the TimeSeries input and output nodes will be available in the
 node pallet.
-    
-    
+
+
 TimeSeries Database Requirements
 ------
 You must have a TimeSeries database running with the wire listener installed
@@ -30,7 +30,7 @@ TimeSeries output node
 -----
 
 The output node writes data to the TimeSeries database. It takes in as input a JSON string from the incoming ```msg.payload``` and makes a REST POST call to insert that JSON as a row into the TimeSeries database.
-The new row is inserted into a virtual table (VTI) created off of the base table specified in the node configuration. The virtual table, which 
+The new row is inserted into a virtual table (VTI) created off of the base table specified in the node configuration. The virtual table, which
 is given the name ```<$BASE_TABLE_NAME>_v```, is automatically created on node deployment or when Node-RED starts.
 
 For example, if you provide a base TimeSeries table called ```sensors```, a virtual table called ```sensors_v``` will automatically be created.
@@ -75,14 +75,14 @@ The following configurations can be set for the output node.
 **Server** - Specify the TimeSeries database server to connect to.
 Note that any server configuration you make can be shared across any number
 of input or output nodes.
-    
+
 * Host - Hostname of the database server.
 * Port - Port must be the same used by the wire listener.
 * Database - The name of the database to connect to.
 * Username - (Only required if the server requires authentication)
 * Password - (Only required if the server requires authentication)
 * Name - (Optional label for this database connection.)
-    
+
 **Table** - The TimeSeries table to insert data into. Note that a
 corresponding Virtual table (VTI) will automatically be created for this base
 table.
@@ -118,7 +118,7 @@ The following configurations can be set for the input node.
 Same as in the output node.
 Note that any server configuration you make can be shared across any number
 of input or output nodes.
-    
+
 * Host - Hostname of the database server.
 * Port - Port must be the same used by the wire listener.
 * Database - The name of the databse to connect to.
@@ -166,9 +166,12 @@ and specify that the unique key column has name "id" in the
 Only one ID value can be specified in the incoming JSON.
 
 
+**ID** - Optionally specify the unique ID the node will use instead of having it supplied through `msg.payload`.
+If an ID is received through `msg.payload` it will override the configured ID.
+
 **Aggregration mode** -
 
-* Discrete - The value we are aggregating is a discrete value and there is no intermittent 
+* Discrete - The value we are aggregating is a discrete value and there is no intermittent
 values between the stored values.
 
 Stock purchase orders are an example of discrete values.
@@ -177,7 +180,7 @@ Stock purchase orders are an example of discrete values.
 
 For example, temperature values have intermittent values even when values are not being recorded.
 
-If a temperature sensor records a value of 50 degress at 
+If a temperature sensor records a value of 50 degress at
 12:00 and and a value of 100 degrees at 12:14, we will get a value of 75 degrees
 for when we try to get the get the average temperature between 12:00-12:15 in discrete mode.
 However, this value is incorrect because what we really want to average is 13 minutes
