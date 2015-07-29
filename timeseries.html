@@ -245,12 +245,9 @@
         New Aggregation</a>
     </div>
 
-    <div>
-        <label for="node-input-ids"><i class="fa fa-wrench"> Name of unique key field in incoming JSON:</i></label>
-    </div>
-
     <div class="form-row">
-        <input type="text" id="node-input-ids" placeholder="sensor_id">
+        <label for="node-input-ids"><i class="fa fa-wrench"></i> Unique Column: </label>
+        <input type="text" id="node-input-ids" placeholder="Unique Column Name">
     </div>
 
     <div class="form-row">
@@ -364,30 +361,29 @@
 
     <p>There is no limit to the number of fields you can aggregate.</p>
 
-    <p><strong>Name of unique key field in incoming JSON - </strong></p>
+    <p><strong>Unique Column -</strong></p>
 
-    <p>Specify the name of the unique key field for the TimeSeries table. This value
-    will be used to find the unique key value in the incoming JSON.</p>
+    <p>Specify the name of the unique column of the TimeSeries table. If <strong>ID</strong> is not specified,
+    this value will also be used to find the unique key value in the incoming JSON (<code>msg.payload.&lt;unique_column&gt;</code>).</p>
 
-    <p>For example, if the unique key column is named "id" and we want to aggregate on
-    row with ID "eca86" we would pass in JSON containing the line:</p>
+    <p>For example, if the unique key column is named <code>id</code> and we want to aggregate on
+    row with ID <code>eca86</code> we would set the <code>id</code> property of the incoming <code>msg.payload</code> to <code>eca86</code> as shown below</p>
 
     <div class="highlighted-data white">
         <div class="highlight">
-            <pre><code class=" hljs r"><span id="LC1" class="line">{ <span class="hljs-keyword">...</span></span>
+            <pre><code class=" hljs r"><span id="LC1" class="line">msg.payload = { <span class="hljs-keyword">...</span></span>
             <span id="LC2" class="line">id: <span class="hljs-string">"eca86"</span></span>
-            <span id="LC3" class="line"><span class="hljs-keyword">...</span> }</span>
-            <span id="LC4" class="line"></span></code></pre>
+            <span id="LC3" class="line"><span class="hljs-keyword">...</span> }</span></code></pre>
       </div>
     </div>
 
-    <p>and specify that the unique key column has name "id" in the
-    "Name of unique key field in incoming JSON field."</p>
+    <p>and specify that the unique key column has the name <code>id</code> in the
+    <strong>Unique Column</strong> field.</p>
 
     <p>Only one ID value can be specified in the incoming JSON</p>
 
-    <p><strong>ID</strong> -
-    Optionally specify the unique ID the node will use instead of having it supplied through msg.payload.
+    <p><strong>ID -</strong></p>
+    <p>Optionally specify the unique ID the node will use instead of having it supplied through msg.payload.
     If an ID is received through msg.payload it will override the configured ID.</p>
 
     <p><strong>Aggregration mode -</strong></p>

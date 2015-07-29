@@ -146,28 +146,31 @@ The following statisitcal aggregations are supported.
 
 There is no limit to the number of fields you can aggregate.
 
-**Name of unique key field in incoming JSON** -
+**Unique Column** -
 
-Specify the name of the unique key field for the TimeSeries table. This value
-will be used to find the unique key value in the incoming JSON.
+Specify the name of the unique column of the TimeSeries table. If **ID** is not specified,
+this value will also be used to find the unique key value in the incoming JSON (`msg.payload.<unique_column>`).
 
-For example, if the unique key column is named "id" and we want to aggregate on
-row with ID "eca86" we would pass in JSON containing the line:
+For example, if the unique key column is named `id` and we want to aggregate on
+row with ID `eca86` we would set the `id` property of the incoming `msg.payload` to `eca86` as shown below
 
 ```
-{ ...
+msg.payload = { ...
 id: "eca86"
 ... }
 ```
 
-and specify that the unique key column has name "id" in the
-"Name of unique key field in incoming JSON field."
+and specify that the unique key column has the name `id` in the
+**Unique Column** field.
 
 Only one ID value can be specified in the incoming JSON.
 
 
-**ID** - Optionally specify the unique ID the node will use instead of having it supplied through `msg.payload`.
-If an ID is received through `msg.payload` it will override the configured ID.
+**ID** -
+
+Optionally specify the unique ID the node will use instead of having it supplied through `msg.payload`.
+If an ID is received through `msg.payload`, however, it will override the configured ID.
+
 
 **Aggregration mode** -
 
