@@ -34,10 +34,10 @@ module.exports = function(RED) {
     this.idcolumn = config.idcolumn;
     this.tscolumn = config.tscolumn;
     this.filter_id = config.filter_id;
-    this.start_type = config.start_type;
-    this.start_ts = config.start_ts;
-    this.end_value = config.end_value;
-    this.end_unit = config.end_unit;
+    this.end_type = config.end_type;
+    this.end_ts = config.end_ts;
+    this.start_value = config.start_value;
+    this.start_unit = config.start_unit;
     this.timeseriesConfig = RED.nodes.getNode( this.timeseries );
 
     this.sqlBaseUrl = "http://" + this.timeseriesConfig.hostname + ":" + this.timeseriesConfig.port + "/" + this.timeseriesConfig.db + "/system.sql?query=";
@@ -93,22 +93,22 @@ module.exports = function(RED) {
       var momentFormat = "YYYY-MM-DD HH:mm:ss";
       var momentStart, momentEnd;
 
-      if( msg.payload.hasOwnProperty( "start" ) )
-      {
-        momentEnd = moment( msg.payload.start );
-      }
-      else
-      {
-        momentEnd = ( this.start_type === "now" ? moment() : moment( this.start_ts ) );
-      }
-
       if( msg.payload.hasOwnProperty( "end" ) )
       {
-        momentStart = moment( msg.payload.end );
+        momentEnd = moment( msg.payload.end );
       }
       else
       {
-        momentStart = moment( momentEnd ).subtract( this.end_value , this.end_unit );
+        momentEnd = ( this.end_type === "now" ? moment() : moment( this.end_ts ) );
+      }
+
+      if( msg.payload.hasOwnProperty( "start" ) )
+      {
+        momentStart = moment( msg.payload.start );
+      }
+      else
+      {
+        momentStart = moment( momentEnd ).subtract( this.start_value , this.start_unit );
       }
 
       // Flip, if necessary

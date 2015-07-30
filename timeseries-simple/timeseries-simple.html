@@ -25,11 +25,11 @@
         idcolumn: { value : "" , required : true },
         filter_id: { value : "" },
         tscolumn: { value : "" , required : true },
-        start_type: { value : "now" },
-        start_ts: { value : "" , validate : function( v ) {
-          $start_type = $( "#node-input-start_type" );
-          var start_type = $start_type.length > 0 ? $start_type.val() : this.start_type;
-          if( start_type === "now" )
+        end_type: { value : "now" },
+        end_ts: { value : "" , validate : function( v ) {
+          $end_type = $( "#node-input-end_type" );
+          var end_type = $end_type.length > 0 ? $end_type.val() : this.end_type;
+          if( end_type === "now" )
           {
             return true;
           }
@@ -38,11 +38,11 @@
             return !isNaN( Date.parse( v ) );
           }
         } },
-        end_value: { value : "0" , required : true , validate : function( v ) {
+        start_value: { value : "0" , required : true , validate : function( v ) {
           v = parseFloat( v );
           return ( !isNaN( v ) && v > 0 );
         } },
-        end_unit: { value : "seconds" , required : true }
+        start_unit: { value : "seconds" , required : true }
       },
       inputs:1,
       outputs:1,
@@ -60,7 +60,7 @@
 
         function updateStartTS( type )
         {
-          var $tsInput = $( "#node-input-start_ts" );
+          var $tsInput = $( "#node-input-end_ts" );
           var $container = $tsInput.parent( ".form-row" );
           if( type === "now" )
           {
@@ -83,11 +83,11 @@
           $( "#node-input-filter_id" ).attr( "placeholder" , "msg.payload." + $( this ).val() );
         } );
 
-        $( "#node-input-start_type" ).on( "change" , function() {
+        $( "#node-input-end_type" ).on( "change" , function() {
           updateStartTS( $( this ).val() );
         } );
 
-        updateStartTS( this.start_type );
+        updateStartTS( this.end_type );
       }
   });
 </script>
@@ -114,20 +114,20 @@
     <input type="text" id="node-input-tscolumn" placeholder="Timeseries Column Name">
   </div>
   <div class="form-row">
-    <label for="node-input-start_type"><i class="icon-time"></i> Select between</label>
-    <select id="node-input-start_type">
+    <label for="node-input-end_type"><i class="icon-time"></i> Select between</label>
+    <select id="node-input-end_type">
       <option value="now">Now</option>
       <option value="tstamp">Enter Date/Time...</option>
     </select>
   </div>
   <div class="form-row">
-    <label for="node-input-start_ts"> </label>
-    <input type="text" id="node-input-start_ts" placeholder="Enter Date/Time">
+    <label for="node-input-end_ts"> </label>
+    <input type="text" id="node-input-end_ts" placeholder="Enter Date/Time">
   </div>
   <div class="form-row">
-    <label for="node-input-end_value">...and</label>
-    <input type="text" id="node-input-end_value" placeholder="#" style="width:40px">
-    <select id="node-input-end_unit" style="width:150px">
+    <label for="node-input-start_value">...and</label>
+    <input type="text" id="node-input-start_value" placeholder="#" style="width:40px">
+    <select id="node-input-start_unit" style="width:150px">
       <option value="seconds">second(s)</option>
       <option value="minutes">minute(s)</option>
       <option value="hours">hour(s)</option>
