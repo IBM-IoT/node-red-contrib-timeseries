@@ -225,7 +225,7 @@ This node is a simpler version of the TimeSeries aggregate node. Instead of perf
 
 **Table** - The TimeSeries table to select from.
 
-**ID Column** - The name of the unique column used to filter by. The name of the column will also be used to find the unique key value in the incoming JSON (`msg.payload.<unique_column>`).
+**Unique Column** - The name of the unique column used to filter by. The name of the column will also be used to find the unique key value in the incoming JSON (`msg.payload.<unique_column>`).
 
 **ID** (Optional) - An unique value (i.e. unique ID of the sensor) used to filter the result. If an ID is received through `msg.payload`, however, it will override this field.
 
