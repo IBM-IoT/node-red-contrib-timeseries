@@ -144,5 +144,34 @@
 </script>
 
 <script type="text/x-red" data-help-name="timeseries-- in">
-    <p>Simple timeseries query node.</p>
+  <p>This node is a simpler version of the TimeSeries aggregate node. Instead of performing aggregation, this node simply selects all TimeSeries data from one row in a TimeSeries table, between two configurable timestamps.</p>
+  <h3><strong>Configuration</strong></h3>
+  <p><strong>Server</strong> - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.</p>
+  <p><strong>Table</strong> - The TimeSeries table to select from.</p>
+  <p><strong>ID Column</strong> - The name of the unique column used to filter by. The name of the column will also be used to find the unique key value in the incoming JSON (<code>msg.payload.&lt;unique_column&gt;</code>).</p>
+  <p><strong>ID</strong> (Optional) - An unique value (i.e. unique ID of the sensor) used to filter the result. If an ID is received through <code>msg.payload</code>, however, it will override this field.</p>
+  <p><strong>TS Column</strong> - Name of the column containing TimeSeries data.</p>
+  <p><strong>Select between ... and ...</strong> - The time period to retrieve data from.</p>
+  <p>The end timestamp can be set to <code>Now</code> which will use the current date and time, or it can be set to an absolute timestamp. The node will attempt to parse any date/time string entered, and will immediately let you know if something is wrong.</p>
+  <p>The start timestamp is calculated based on the end timestamp.</p>
+  <p><em>Example 1: Select all data from 2014</em></p>
+  <ul>
+  <li>Select between <code>12/31/2014</code> and <code>1</code> <code>year(s)</code> ago.</li>
+  </ul>
+  <p><em>Example 2: Select data for the last 3 months</em></p>
+  <ul>
+  <li>Select between <code>Now</code> and <code>3</code> <code>month(s)</code> ago.</li>
+  </ul>
+  <p>The node will also look for start and end timestamps (UNIX timestamps in milliseconds) in the incoming JSON (<code>msg.payload.start</code> and <code>msg.payload.end</code>). Both are optional, but, when available, they will override the values configured in the node.</p>
+  <pre><code>msg.payload = { ...
+  // 06/30/2015
+  start : 1435622400000,
+  // 07/30/2015
+  end : 1438214400000
+  ... }
+  </code></pre>
+  <p>These methods can also be combined. For example, you could only supply an end timestamp through <code>msg.payload.end</code> and configure the node to calculate the start timestamp based on it.</p>
+  <p><em>Note: If the end timestamp is before the start timestamp, the node will automatically flip the values.</em></p>
+  <p><strong>Name</strong> - An optional label for the node.</p>
+  </div>
 </script>

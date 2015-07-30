@@ -213,3 +213,47 @@ The size of the calendar pattern on which to aggregate.
 For most uses, this will be the same as your "aggregate between" value.
 
 **Name** - An optional label for this node.
+
+TimeSeries simple input node
+-----
+
+This node is a simpler version of the TimeSeries aggregate node. Instead of performing aggregation, this node simply selects all TimeSeries data from one row in a TimeSeries table, between two configurable timestamps.
+
+#### Configuration
+
+**Server** - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.
+
+**Table** - The TimeSeries table to select from.
+
+**ID Column** - The name of the unique column used to filter by. The name of the column will also be used to find the unique key value in the incoming JSON (`msg.payload.<unique_column>`).
+
+**ID** (Optional) - An unique value (i.e. unique ID of the sensor) used to filter the result. If an ID is received through `msg.payload`, however, it will override this field.
+
+**TS Column** - Name of the column containing TimeSeries data.
+
+**Select between ... and ...** - The time period to retrieve data from.
+
+The end timestamp can be set to `Now` which will use the current date and time, or it can be set to an absolute timestamp. The node will attempt to parse any date/time string entered, and will immediately let you know if something is wrong.
+
+The start timestamp is calculated based on the end timestamp.
+
+*Example 1: Select all data from 2014*
+* Select between `12/31/2014` and `1` `year(s)` ago.
+
+*Example 2: Select data for the last 3 months*
+* Select between `Now` and `3` `month(s)` ago.
+
+The node will also look for start and end timestamps (UNIX timestamps in milliseconds) in the incoming JSON (`msg.payload.start` and `msg.payload.end`). Both are optional, but, when available, they will override the values configured in the node.
+
+```
+msg.payload = { ...
+  start : 1435622400000, // 06/30/2015
+  end : 1438214400000    // 07/30/2015
+... }
+```
+
+These methods can also be combined. For example, you could only supply an end timestamp through `msg.payload.end` and configure the node to calculate the start timestamp based on it.
+
+*Note: If the end timestamp is before the start timestamp, the node will automatically flip the values.*
+
+**Name** - An optional label for the node.
