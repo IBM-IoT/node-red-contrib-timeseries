@@ -20,7 +20,7 @@
     "nodes": {
       "timeseries": "timeseries/timeseries.js",
       "timeseries--": "timeseries/timeseries-simple.js",
-      "iotf-transform": "iotftransform.js"
+      "iotf-transform": "ioft-transform/iotftransform.js"
     }
   },
   "author": "Kenneth Myers <myerske@us.ibm.com> (http://nodered.org)",
