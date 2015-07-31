@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-timeseries",
-  "version": "1.0.0-2",
-  "description": "A Node-RED node for TimeSeries Access",
+  "version": "1.1.0",
+  "description": "A suite of Node-RED nodes for TimeSeries Access",
   "dependencies": {
     "moment": "2.9.*",
     "request": "^2.60.0"
@@ -23,6 +23,14 @@
     }
   },
   "author": "Kenneth Myers <myerske@us.ibm.com> (http://nodered.org)",
+  "contributors": [{
+    "name": "Cristian Traistaru",
+    "email": "traistar@us.ibm.com"
+    },
+    {
+    "name": "Kevin Enright",
+    "email": "kenright@us.ibm.com"
+    }],
   "bugs": {
     "url": "https://github.com/IBM-IoT/node-red-contrib-timeseries/issues"
   },
