@@ -8,10 +8,10 @@ Run the following command in the root directory of your Node-RED install:
 
 ```npm install node-red-contrib-timeseries```
 
-Once installed, the TimeSeries input and output nodes will be available in the 
+Once installed, the TimeSeries input and output nodes will be available in the
 node pallet.
-    
-    
+
+
 TimeSeries Database Requirements
 ------
 You must have a TimeSeries database running with the wire listener installed
@@ -30,7 +30,7 @@ TimeSeries output node
 -----
 
 The output node writes data to the TimeSeries database. It takes in as input a JSON string from the incoming ```msg.payload``` and makes a REST POST call to insert that JSON as a row into the TimeSeries database.
-The new row is inserted into a virtual table (VTI) created off of the base table specified in the node configuration. The virtual table, which 
+The new row is inserted into a virtual table (VTI) created off of the base table specified in the node configuration. The virtual table, which
 is given the name ```<$BASE_TABLE_NAME>_v```, is automatically created on node deployment or when Node-RED starts.
 
 For example, if you provide a base TimeSeries table called ```sensors```, a virtual table called ```sensors_v``` will automatically be created.
@@ -75,14 +75,14 @@ The following configurations can be set for the output node.
 **Server** - Specify the TimeSeries database server to connect to.
 Note that any server configuration you make can be shared across any number
 of input or output nodes.
-    
+
 * Host - Hostname of the database server.
 * Port - Port must be the same used by the wire listener.
 * Database - The name of the database to connect to.
 * Username - (Only required if the server requires authentication)
 * Password - (Only required if the server requires authentication)
 * Name - (Optional label for this database connection.)
-    
+
 **Table** - The TimeSeries table to insert data into. Note that a
 corresponding Virtual table (VTI) will automatically be created for this base
 table.
@@ -118,7 +118,7 @@ The following configurations can be set for the input node.
 Same as in the output node.
 Note that any server configuration you make can be shared across any number
 of input or output nodes.
-    
+
 * Host - Hostname of the database server.
 * Port - Port must be the same used by the wire listener.
 * Database - The name of the databse to connect to.
@@ -146,29 +146,35 @@ The following statisitcal aggregations are supported.
 
 There is no limit to the number of fields you can aggregate.
 
-**Name of unique key field in incoming JSON** -
+**Unique Column** -
 
-Specify the name of the unique key field for the TimeSeries table. This value
-will be used to find the unique key value in the incoming JSON.
+Specify the name of the unique column of the TimeSeries table. If **ID** is not specified,
+this value will also be used to find the unique key value in the incoming JSON (`msg.payload.<unique_column>`).
 
-For example, if the unique key column is named "id" and we want to aggregate on
-row with ID "eca86" we would pass in JSON containing the line:
+For example, if the unique key column is named `id` and we want to aggregate on
+row with ID `eca86` we would set the `id` property of the incoming `msg.payload` to `eca86` as shown below
 
 ```
-{ ...
+msg.payload = { ...
 id: "eca86"
 ... }
 ```
 
-and specify that the unique key column has name "id" in the
-"Name of unique key field in incoming JSON field."
+and specify that the unique key column has the name `id` in the
+**Unique Column** field.
 
 Only one ID value can be specified in the incoming JSON.
 
 
+**ID** -
+
+Optionally specify the unique ID the node will use instead of having it supplied through `msg.payload`.
+If an ID is received through `msg.payload`, however, it will override the configured ID.
+
+
 **Aggregration mode** -
 
-* Discrete - The value we are aggregating is a discrete value and there is no intermittent 
+* Discrete - The value we are aggregating is a discrete value and there is no intermittent
 values between the stored values.
 
 Stock purchase orders are an example of discrete values.
@@ -177,7 +183,7 @@ Stock purchase orders are an example of discrete values.
 
 For example, temperature values have intermittent values even when values are not being recorded.
 
-If a temperature sensor records a value of 50 degress at 
+If a temperature sensor records a value of 50 degress at
 12:00 and and a value of 100 degrees at 12:14, we will get a value of 75 degrees
 for when we try to get the get the average temperature between 12:00-12:15 in discrete mode.
 However, this value is incorrect because what we really want to average is 13 minutes
@@ -207,3 +213,60 @@ The size of the calendar pattern on which to aggregate.
 For most uses, this will be the same as your "aggregate between" value.
 
 **Name** - An optional label for this node.
+
+TimeSeries simple input node
+-----
+
+This node is a simpler version of the TimeSeries aggregate node. Instead of performing aggregation, this node simply selects all TimeSeries data from one row in a TimeSeries table, between two configurable timestamps.
+
+#### Configuration
+
+**Server** - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.
+
+**Table** - The TimeSeries table to select from.
+
+**Unique Column** - The name of the unique column used to filter by. The name of the column will also be used to find the unique key value in the incoming JSON (`msg.payload.<unique_column>`).
+
+**ID** (Optional) - An unique value (i.e. unique ID of the sensor) used to filter the result. If an ID is received through `msg.payload`, however, it will override this field.
+
+**TS Column** - Name of the column containing TimeSeries data.
+
+**Select between ... and ...** - The time period to retrieve data from.
+
+The end timestamp can be set to `Now` which will use the current date and time, or it can be set to an absolute timestamp. The node will attempt to parse any date/time string entered, and will immediately let you know if something is wrong.
+
+The start timestamp is calculated based on the end timestamp.
+
+*Example 1: Select all data from 2014*
+* Select between `12/31/2014` and `1` `year(s)` ago.
+
+*Example 2: Select data for the last 3 months*
+* Select between `Now` and `3` `month(s)` ago.
+
+The node will also look for start and end timestamps (UNIX timestamps in milliseconds) in the incoming JSON (`msg.payload.start` and `msg.payload.end`). Both are optional, but, when available, they will override the values configured in the node.
+
+```
+msg.payload = { ...
+  start : 1435622400000, // 06/30/2015
+  end : 1438214400000    // 07/30/2015
+... }
+```
+
+These methods can also be combined. For example, you could only supply an end timestamp through `msg.payload.end` and configure the node to calculate the start timestamp based on it.
+
+*Note: If the end timestamp is before the start timestamp, the node will automatically flip the values.*
+
+**Name** - An optional label for the node.
+
+TimeSeries simple output node
+-----
+
+This node inserts data into a database using an HTTP POST request, and `msg.payload` as the body of the request.
+
+#### Configuration
+
+**Server** - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.
+
+**Table** - The table/collection to insert into.
+
+**Name** - An optional label for the node.

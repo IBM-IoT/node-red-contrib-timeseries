@@ -170,6 +170,7 @@ module.exports = function(RED) {
         this.calendarRange = n.calendarRange;
         this.calendarUnit = n.calendarUnit;
         this.ids = n.ids;
+        this.filter_id = n.filter_id;
         this.timeseriesConfig = RED.nodes.getNode(this.timeseries);
         this.host = this.timeseriesConfig.hostname;
         this.port = this.timeseriesConfig.port;
@@ -262,8 +263,12 @@ module.exports = function(RED) {
 
                 var id_field_name = this.ids;
 
-
-                var id_field_value = msg.payload[this.ids];
+                var id_field_value = ( msg.hasOwnProperty( "payload" ) && msg.payload.hasOwnProperty( this.ids ) ) ? msg.payload[this.ids] : this.filter_id;
+                if( !id_field_value )
+                {
+                  node.error( "Missing ID. Either configure an ID or supply one through msg.payload." + this.ids );
+                  return;
+                }
 
                 if (Array.isArray(id_field_value)){
                     id_field_value = "'" + id_field_value.join("','") + "'";

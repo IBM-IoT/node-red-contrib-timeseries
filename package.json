@@ -3,7 +3,8 @@
   "version": "1.0.0-2",
   "description": "A Node-RED node for TimeSeries Access",
   "dependencies": {
-    "moment": "2.9.*"
+    "moment": "2.9.*",
+    "request": "^2.60.0"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,8 @@
   ],
   "node-red": {
     "nodes": {
-      "timeseries": "timeseries.js"
+      "timeseries": "timeseries.js",
+      "timeseries--": "timeseries-simple/timeseries-simple.js"
     }
   },
   "author": "Kenneth Myers <myerske@us.ibm.com> (http://nodered.org)",
