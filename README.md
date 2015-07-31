@@ -257,3 +257,16 @@ These methods can also be combined. For example, you could only supply an end ti
 *Note: If the end timestamp is before the start timestamp, the node will automatically flip the values.*
 
 **Name** - An optional label for the node.
+
+TimeSeries simple output node
+-----
+
+This node inserts data into a database using an HTTP POST request, and `msg.payload` as the body of the request.
+
+#### Configuration
+
+**Server** - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.
+
+**Table** - The table/collection to insert into.
+
+**Name** - An optional label for the node.

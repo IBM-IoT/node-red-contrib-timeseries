@@ -175,3 +175,44 @@
   <p><strong>Name</strong> - An optional label for the node.</p>
   </div>
 </script>
+
+<script type="text/javascript">
+  RED.nodes.registerType( 'timeseries-- out' , {
+      category: 'storage-output',
+      color: '#bbe5ff',
+      defaults: {
+        timeseries: { type : "timeseries" , required : true },
+        name: { value : "" },
+        table : { value : "" , required : true }
+      },
+      inputs:1,
+      outputs:0,
+      icon: "timeseries.png",
+      label: function() {
+          return this.name || "timeseries post";
+      }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="timeseries-- out">
+    <div class="form-row">
+      <label for="node-input-timeseries"><i class="fa fa-server"></i> Server</label>
+      <input type="text" id="node-input-timeseries">
+    </div>
+    <div class="form-row">
+      <label for="node-input-table"><i class="fa fa-table"></i> Table</label>
+      <input type="text" id="node-input-table" placeholder="table">
+    </div>
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="timeseries-- out">
+  <p>This node inserts data into a database using an HTTP POST request, and <code>msg.payload</code> as the body of the request.</p>
+  <h3><strong>Configuration</strong></h3>
+  <p><strong>Server</strong> - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.</p>
+  <p><strong>Table</strong> - The table/collection to insert into.</p>
+  <p><strong>Name</strong> - An optional label for the node.</p>
+</script>

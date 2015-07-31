@@ -146,4 +146,49 @@ module.exports = function(RED) {
   }
 
   RED.nodes.registerType( "timeseries-- in", TimeSeriesSimple );
+
+  function TimeSeriesSimpleOut( config )
+  {
+    RED.nodes.createNode( this , config );
+
+    var self = this;
+    this.table = config.table;
+    this.timeseriesConfig = RED.nodes.getNode( config.timeseries );
+    this.uri = "http://" + this.timeseriesConfig.hostname + ":" + this.timeseriesConfig.port + "/" + this.timeseriesConfig.db + "/" + this.table;
+
+    this.on( "input" , function( msg ) {
+
+      if( !msg.hasOwnProperty( "payload" ) )
+      {
+        self.error( "Missing payload." );
+        return;
+      }
+
+      var options = {
+        uri : this.uri,
+        headers : {
+          "Content-Type" : "application/json"
+        },
+        method : "POST",
+        body : JSON.stringify( msg.payload )
+      };
+
+      request( options , function( error , response , body ) {
+        if( error || response.statusCode != 200 )
+        {
+          if( error )
+          {
+            self.error( error );
+          }
+          else
+          {
+            self.error( "(" + response.statusCode + ") " + body );
+          }
+        }
+      } );
+
+    } );
+  }
+
+  RED.nodes.registerType( "timeseries-- out", TimeSeriesSimpleOut );
 };
