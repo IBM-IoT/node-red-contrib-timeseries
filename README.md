@@ -1,6 +1,6 @@
 node-red-contrib-timeseries
 ========================
-A group of [Node-RED](http://nodered.org) nodes to work with a TimeSeries database.
+A suite of [Node-RED](http://nodered.org) nodes providing an easy-to-use interface for working with a TimeSeries database.
 
 Install
 -------

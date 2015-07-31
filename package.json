@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-timeseries",
   "version": "1.1.0",
-  "description": "A suite of Node-RED nodes for TimeSeries Access",
+  "description": "A suite of Node-RED nodes providing an easy-to-use interface for working with a TimeSeries database.",
   "dependencies": {
     "moment": "2.9.*",
     "request": "^2.60.0"
