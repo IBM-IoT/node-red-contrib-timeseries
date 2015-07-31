@@ -1,26 +1,6 @@
-node-red-contrib-timeseries
+TimeSeries Nodes
 ========================
-A [Node-RED](http://nodered.org) node to output to and read from a TimeSeries database.
-
-Install
--------
-Run the following command in the root directory of your Node-RED install:
-
-```npm install node-red-contrib-timeseries```
-
-Once installed, the TimeSeries input and output nodes will be available in the
-node pallet.
-
-
-TimeSeries Database Requirements
-------
-You must have a TimeSeries database running with the wire listener installed
-and running in REST mode with SQL passthrough turned on.
-
-See the following documentation for information regarding the setup and configuration of the wire listener:
-
-http://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.json.doc/ids_json_004.htm
-
+A [Node-RED](http://nodered.org) nodes to output to and read from a TimeSeries database.
 
 Overview
 -----
