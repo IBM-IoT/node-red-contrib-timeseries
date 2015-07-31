@@ -145,7 +145,7 @@
 
 <script type="text/x-red" data-help-name="timeseries-- in">
   <p>This node is a simpler version of the TimeSeries aggregate node. Instead of performing aggregation, this node simply selects all TimeSeries data from one row in a TimeSeries table, between two configurable timestamps.</p>
-  <h3><strong>Configuration</strong></h3>
+  <h4><strong>Configuration</strong></h4>
   <p><strong>Server</strong> - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.</p>
   <p><strong>Table</strong> - The TimeSeries table to select from.</p>
   <p><strong>Unique Column</strong> - The name of the unique column used to filter by. The name of the column will also be used to find the unique key value in the incoming JSON (<code>msg.payload.&lt;unique_column&gt;</code>).</p>
@@ -212,7 +212,7 @@
 
 <script type="text/x-red" data-help-name="timeseries-- out">
   <p>This node inserts data into a database using an HTTP POST request, and <code>msg.payload</code> as the body of the request.</p>
-  <h3><strong>Configuration</strong></h3>
+  <h4><strong>Configuration</strong></h4>
   <p><strong>Server</strong> - The TimeSeries database server to connect to. Like the previous TimeSeries nodes, this node makes use of the TimeSeries configuration node included in this package.</p>
   <p><strong>Table</strong> - The table/collection to insert into.</p>
   <p><strong>Name</strong> - An optional label for the node.</p>
