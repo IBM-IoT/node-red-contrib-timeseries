@@ -26,4 +26,4 @@ Overview
 -----
 Five nodes are included in this install. The TimeSeries input and output nodes.  Timeseries simple input and output nodes, and an IoTF Transformation node.
 
-For more information on the input and output nodes see the README.md file in the timeseries folder.  For more information on the IoTF Transformation node see the iotf-transform.
+For more information on the input and output nodes see the README.md file in the timeseries folder.  For more information on the IoTF Transformation node see the iotf-transform folder.
