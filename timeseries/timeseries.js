@@ -136,7 +136,7 @@ module.exports = function(RED) {
 
             var virtualTableCreationJson = "".concat('{"$sql":"execute procedure tscreatevirtualtab(',
                 "'", virtualTableName, "', '", node.baseTimeSeriesTable, "', '","calendar(ts_1sec), origin(",
-                current_date, ".00000)')", ';"}');
+                current_date, ".00000),irregular')", ';"}');
             var virtualTableCreationUrl = sqlPassThroughBaseUrl.concat(virtualTableCreationJson);
             node.log("If it does not already exist, creating the virtual table for the base table: " +
             node.baseTimeSeriesTable);
