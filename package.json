@@ -14,7 +14,9 @@
   "keywords": [
     "node-red",
     "timeseries",
-    "IBM"
+    "IBM",
+    "Informix",
+    "time series"
   ],
   "node-red": {
     "nodes": {
