@@ -232,7 +232,7 @@ module.exports = function(RED) {
                 }
                 else {
                     node.log(body);
-                    node.log(error);
+                    if (error) node.log(error);
                 }
 
                 var newCalendarName = "".concat("ts_", this.calendarRange, abbreviatedUnit);
@@ -254,7 +254,7 @@ module.exports = function(RED) {
                     }
                     else {
                         node.log(body);
-                        node.log(error);
+                        if (error) node.log(error);
                     }
                 })
             })
@@ -348,7 +348,7 @@ module.exports = function(RED) {
                         }
                         else {
                             node.log(body);
-                            node.log(error);
+                            if (error) node.log(error);
                         }
                     })
                 }
@@ -390,7 +390,7 @@ module.exports = function(RED) {
                         }
                         else {
                             node.log(body);
-                            node.log(error);
+                            if (error) node.log(error);
                         }
                     })
 
