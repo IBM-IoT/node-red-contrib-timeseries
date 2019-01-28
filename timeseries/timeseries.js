@@ -132,7 +132,7 @@ module.exports = function(RED) {
             var moment = require('moment');
             var date_time_format = "YYYY-MM-DD HH:mm:ss";
 
-            var current_date = moment().format(date_time_format);
+            var current_date = moment().utc().format(date_time_format);
 
             var virtualTableCreationJson = "".concat('{"$sql":"execute procedure tscreatevirtualtab(',
                 "'", virtualTableName, "', '", node.baseTimeSeriesTable, "', '","calendar(ts_1sec), origin(",
@@ -143,7 +143,7 @@ module.exports = function(RED) {
             node.log(virtualTableCreationUrl);
             // Execute the command via REST.
             request(virtualTableCreationUrl, function (error, response, body) {
-                if (!error && response.statusCode == 200) {
+                if (!error) {
                     if (body.indexOf("already exists in database") > -1) {
                         node.log("Virtual table " + virtualTableName + " already exists. Nothing to do.")
                     }
@@ -263,31 +263,33 @@ module.exports = function(RED) {
 
                 var id_field_name = this.ids;
 
-                var id_field_value = ( msg.hasOwnProperty( "payload" ) && msg.payload.hasOwnProperty( this.ids ) ) ? msg.payload[this.ids] : this.filter_id;
-                if( !id_field_value )
-                {
+                var id_field_value = this.filter_id;
+                if (msg.hasOwnProperty('payload') && msg.payload.hasOwnProperty(this.ids)) {
+                    var payloadIdFieldValue = null;
+                    try {
+                        payloadIdFieldValue = msg.payload[this.ids].toString().trim();
+                    } catch (e) { }
+                    
+                    if (payloadIdFieldValue) {
+                        id_field_value = payloadIdFieldValue;
+                    }
+                }
+
+                if (!id_field_value) {
                   node.error( "Missing ID. Either configure an ID or supply one through msg.payload." + this.ids );
                   return;
                 }
-
-                if (Array.isArray(id_field_value)){
-                    id_field_value = "'" + id_field_value.join("','") + "'";
-                }
-                else{
-                    id_field_value = "'" + id_field_value + "'";
-                }
-                id_field_value = id_field_value.toString();
 
                 var current_date;
                 var past_date;
                 var date_time_format = "YYYY-MM-DD HH:mm:ss";
                 if (node.timeType === 'current_time'){
-                    current_date = moment().format(date_time_format);
-                    past_date = moment(current_date).subtract(parseInt(node.range), node.unit).format(date_time_format);
+                    current_date = moment().utc().format(date_time_format);
+                    past_date = moment(current_date).subtract(parseInt(node.range), node.unit).utc().format(date_time_format);
                 }
                 else {
-                    current_date = moment(msg.payload['timestamp']).format(date_time_format);
-                    past_date = moment(msg.payload['timestamp']).subtract(parseInt(node.range), node.unit).format(date_time_format);
+                    current_date = moment(msg.payload['timestamp']).utc().format(date_time_format);
+                    past_date = moment(msg.payload['timestamp']).subtract(parseInt(node.range), node.unit).utc().format(date_time_format);
                 }
 
                 var outRowFieldString = "";
@@ -333,7 +335,7 @@ module.exports = function(RED) {
                         "0",
                         ",'", past_date, ".00000'::datetime year to fraction(5)",
                         ",'", current_date, ".00000'::datetime year to fraction(5))::timeseries( row (", outrow, ")) from ",
-                        node.baseTimeSeriesTable, ' where ', id_field_name, ' in (', id_field_value, ")", ' ))) as tab(t);"}');
+                        node.baseTimeSeriesTable, ' where ', id_field_name, ' = \'', id_field_value, '\' ))) as tab(t);"}');
 
                     node.log("Calling the aggregateBy() function");
                     node.log(aggregateByFunctionUrl);
@@ -355,8 +357,6 @@ module.exports = function(RED) {
 
                 else if (node.mode === "continuous"){
 
-                    var stat = "AVG".concat("($", node.tscolumnvalue, ")");
-
                     var aggregation_string_only_avg = aggregation_string.replace("SUM", "AVG").replace("MIN", "AVG").replace("MAX", "AVG");
 
                     var aggregateByFunctionUrl = "".concat(baseUrl,
@@ -373,8 +373,7 @@ module.exports = function(RED) {
                         "',", node.tscolumn, ", 0 ",
                         ",'", past_date, ".00000'::datetime year to fraction(5)",
                         ",'", current_date, ".00000'::datetime year to fraction(5))::timeseries( row (", outrow, ")), 1) from ",
-                        node.baseTimeSeriesTable, ' where ', id_field_name, ' in ', "(", id_field_value, ")", ' ))) as tab(t);"}');
-                    //node.baseTimeSeriesTable, ' where ', id_field_name, " = 'eca86bf831dd.ZWnode3' or  ", id_field_name, " = 'eca86bf831dd.ZWnode2'" ,  ' ))) as tab(t);"}');
+                        node.baseTimeSeriesTable, ' where ', id_field_name, ' = \'', id_field_value, '\' ))) as tab(t);"}');
 
                     node.log("Calling the aggregateBy() function");
                     node.log(aggregateByFunctionUrl);
@@ -469,21 +468,7 @@ function getCalenderTypeForInnerAggregateBy(calendarValue, calendarUnit) {
 }
 
 function formatPayloadToSend(body, id_field_name, id_field_value) {
-    var moment = require('moment');
-
-    var timeSeriesEntry;
-    var unixTimeStamp;
-    var jsonBody = JSON.parse(body);
-    var arrayLength = jsonBody.length;
-    for (var i = 0; i < arrayLength; i++) {
-        timeSeriesEntry = jsonBody[i];
-        unixTimeStamp = timeSeriesEntry['timestamp']['$date'];
-
-        timeSeriesEntry['timestamp'] = moment(unixTimeStamp).format("YYYY-MM-DD HH:mm:ss");
-        jsonBody[i] = timeSeriesEntry;
-    }
-    var json_body_with_id = {};
+    var json_body_with_id = { d: JSON.parse(body) };
     json_body_with_id[id_field_name] = id_field_value;
-    json_body_with_id["d"] = jsonBody;
     return json_body_with_id;
 }
