@@ -14,6 +14,11 @@
  * limitations under the License.
  **/
 
+function safeLog(node, payload) {
+    // trying to log an undefined payload causes some versions of Node-RED to crash
+    // -> make sure to log only if the payload is a truthy value
+    if(payload) node.log(payload);
+}
 
 module.exports = function(RED) {
     "use strict";
@@ -148,7 +153,7 @@ module.exports = function(RED) {
                         node.log("Virtual table " + virtualTableName + " already exists. Nothing to do.")
                     }
                     else {
-                        node.log(body);
+                        safeLog(node, body);
                     }
                 }
                 else {
@@ -227,11 +232,11 @@ module.exports = function(RED) {
                         node.log("Calendar pattern " + calendarPatternName + " already exists. Nothing to do.")
                     }
                     else {
-                        node.log(body);
+                        safeLog(node, body);
                     }
                 }
                 else {
-                    node.log(body);
+                    safeLog(node, body);
                     if (error) node.log(error);
                 }
 
@@ -249,11 +254,11 @@ module.exports = function(RED) {
                             node.log("Calendar " + newCalendarName + " already exists. Nothing to do.")
                         }
                         else{
-                            node.log(body);
+                            safeLog(node, body);
                         }
                     }
                     else {
-                        node.log(body);
+                        safeLog(node, body);
                         if (error) node.log(error);
                     }
                 })
@@ -349,7 +354,7 @@ module.exports = function(RED) {
                             node.send(msg);
                         }
                         else {
-                            node.log(body);
+                            safeLog(node, body);
                             if (error) node.log(error);
                         }
                     })
@@ -388,7 +393,7 @@ module.exports = function(RED) {
                             node.send(msg);
                         }
                         else {
-                            node.log(body);
+                            safeLog(node, body);
                             if (error) node.log(error);
                         }
                     })
