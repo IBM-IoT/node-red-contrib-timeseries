@@ -3,7 +3,7 @@
   "version": "1.2.1",
   "description": "A suite of Node-RED nodes providing an easy-to-use interface for working with a TimeSeries database.",
   "dependencies": {
-    "moment": "2.9.*",
+    "moment": "2.24.*",
     "request": "^2.60.0"
   },
   "repository": {
